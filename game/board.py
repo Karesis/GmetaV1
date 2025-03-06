@@ -19,11 +19,11 @@ class Piece:
             str: 棋子的符号 
         """
         if self.color == 1:
-            return "●"
+            return "@"
         elif self.color == -1:
-            return "○"
+            return "O"
         else:
-            return "十"
+            return "+"
     
     def __repr__(self):
         """
@@ -99,16 +99,24 @@ class Board:
         Returns:
             str: 棋盘的简化文本可视化
         """
-        # 创建列标题
-        header = "  " + "".join(f"{i} " for i in range(self.size))
-        board_str = [header]
+        # 优化宽度比例，使棋盘视觉上更方正
+        row_width = 2  # 行号宽度
+        col_width = 2  # 棋子宽度
         
-        # 添加每一行
-        for i, row in enumerate(self.board):
-            row_str = f"{i} " + "".join(f"{str(piece)} " for piece in row)
-            board_str.append(row_str)
+        # 创建列标题（第一行）
+        header = " " * row_width  # 左上角留空
+        for i in range(self.size):
+            header += f"{i:^{col_width}}"
         
-        return "\n".join(board_str)
+        # 添加每一行，减少宽度使棋盘更方正
+        rows = [header]
+        for i in range(self.size):
+            row = f"{i:{row_width}d}"  # 行号
+            for j in range(self.size):
+                row += f"{str(self.board[i][j]):^{col_width}}"
+            rows.append(row)
+        
+        return "\n".join(rows)
     
     def to_list(self):
         """
@@ -124,41 +132,3 @@ class Board:
         在控制台打印棋盘
         """
         print(str(self))
-    
-    def html_visualize(self):
-        """
-        生成棋盘的HTML可视化表示
-        
-        Returns:
-            str: HTML格式的棋盘表示
-        """
-        html_lines = ['<table style="border-collapse: collapse; margin: auto;">']
-        
-        # 添加列标题
-        header = ['<tr><th style="width: 30px;"></th>']
-        header.extend([f'<th style="width: 30px;">{i}</th>' for i in range(self.size)])
-        header.append('</tr>')
-        html_lines.extend(header)
-        
-        # 添加棋盘每一行
-        for i, row in enumerate(self.board):
-            row_html = [f'<tr><th>{i}</th>']
-            for piece in row:
-                cell_style = "width: 30px; height: 30px; border: 1px solid black; text-align: center;"
-                if piece.color == 1:
-                    cell_content = '●'
-                    cell_style += " background-color: black; color: white;"
-                elif piece.color == -1:
-                    cell_content = '○'
-                    cell_style += " background-color: white; color: black;"
-                else:
-                    cell_content = '+'
-                    cell_style += " background-color: #F0F0F0;"
-                
-                row_html.append(f'<td style="{cell_style}">{cell_content}</td>')
-            
-            row_html.append('</tr>')
-            html_lines.extend(row_html)
-        
-        html_lines.append('</table>')
-        return '\n'.join(html_lines)

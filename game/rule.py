@@ -1,4 +1,4 @@
-from board import Board, Piece
+from .board import Board, Piece
 
 class GomokuRule:
     def __init__(self, board_size=15):
